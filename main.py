@@ -9,10 +9,9 @@ class FrameCapture:
 
     # menginisialisasi jalur file
     # dan membuat direktori untuk frame yang ditangkap
-    def __init__(self, file_path):
+    def __init__(self, video_path):
         self.directory = "captured_frames"
-        self.file_path = file_path
-
+        self.video = cv2.VideoCapture(video_path)
         # Jika direktori sudah ada,
         # maka akan dihapus dan direplace dengan direktori baru.
         if os.path.exists(self.directory):
@@ -21,18 +20,17 @@ class FrameCapture:
 
     # Fungsi untuk menangkap semua frame dari file video
     def capture_frames(self):
-        cv2_object = cv2.VideoCapture(self.file_path)
 
-        frame_number = 0
-        frame_found = 1
+        count = 0
 
         # Mengulang selama masih terdapat frame yang dapat ditangkap
-        while frame_found:
-            frame_found, image = cv2_object.read()
-            capture = f"{self.directory}/frame{frame_number}.jpg"
+        while True:
+            success, image = self.video.read()
+            if not success:
+                break
+            capture = f"{self.directory}/frame%d.jpg" % count
             cv2.imwrite(capture, image)
-
-            frame_number += 1
+            count += 1
 
 
 if __name__ == "__main__":
