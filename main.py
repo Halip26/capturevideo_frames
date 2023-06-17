@@ -2,6 +2,7 @@ import os
 import shutil
 import sys
 import cv2
+from datetime import datetime
 
 
 # Deklarasi kelas FrameCapture
@@ -10,7 +11,7 @@ class FrameCapture:
     # menginisialisasi jalur file
     # dan membuat direktori untuk frame yang ditangkap
     def __init__(self, video_path):
-        self.directory = "captured_frames"
+        self.directory = 'captured_frames-%s' % datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         self.video = cv2.VideoCapture(video_path)
         # Jika direktori sudah ada,
         # maka akan dihapus dan direplace dengan direktori baru.
@@ -22,6 +23,7 @@ class FrameCapture:
     def capture_frames(self):
 
         count = 0
+        total_frames = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
 
         # Mengulang selama masih terdapat frame yang dapat ditangkap
         while True:
@@ -31,6 +33,11 @@ class FrameCapture:
             capture = f"{self.directory}/frame%d.jpg" % count
             cv2.imwrite(capture, image)
             count += 1
+
+            # Calculate the percentage completed and print a progress line
+            percent_complete = count / total_frames * 100
+            print(
+                f"Captured {count} frames ({percent_complete:.1f}%)", end="\r")
 
 
 if __name__ == "__main__":
